@@ -1,12 +1,24 @@
-# React + Vite
+# 🎬 Movie Finder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A sleek React web application to search for movies and discover trending films. Powered by the [TMDB API](https://www.themoviedb.org/documentation/api), hosted on Firebase, and backed with Firestore to store and display trending search data.
 
-Currently, two official plugins are available:
+> 🛠️ **This project was built as a learning exercise to explore and understand Firebase, React, and working with third-party APIs.**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🚀 Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 🔍 **Search for Movies** by name
+- 📈 **Trending Section** powered by Firebase Firestore
+- ⏱️ **Debounced Input** to reduce unnecessary API calls
+- 🌐 **Live Data** from TMDB and Firestore (using `onSnapshot`)
+- ⚡ **Responsive & Stylish UI**
+- ☁️ **Firebase Hosting & Database**
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React, Vite
+- **Backend**: Firebase Firestore
+- **Hosting**: Firebase Hosting
+- **API**: TMDB (The Movie Database)
+
