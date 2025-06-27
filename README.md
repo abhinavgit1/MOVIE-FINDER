@@ -6,6 +6,10 @@ A sleek React web application to search for movies and discover trending films. 
 
 ---
 
+## 🌐 Live Demo
+
+🔗 [Visit the Website](https://movie-finder-1bc1c.web.app/)
+
 ## 🚀 Features
 
 - 🔍 **Search for Movies** by name
