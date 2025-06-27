@@ -1,10 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, onSnapshot, collection, query, where, orderBy, limit } from "firebase/firestore";
 import React, { useState, useEffect } from 'react'
 import { useDebounce } from 'react-use';
 import Search from './components/Search.jsx'
 import Spinner from './components/Spinner.jsx'
 import MovieCard from './components/MovieCard.jsx'
+import { updateSearchCount } from './firebaseHelpers';
+import { getTrendingMovies } from "./firebaseHelpers";
 
 
 
@@ -24,7 +26,8 @@ const App = () => {
   const [movie, setmovie] = useState([]);
   const [isLoading, setisLoading] = useState(true);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-
+  const [trendingMovies, settrendingMovies] = useState([]);
+  
   const DISCOVER_URL = "https://api.themoviedb.org/3/discover/movie";
   const SEARCH_URL = "https://api.themoviedb.org/3/search/movie";
 
@@ -50,10 +53,25 @@ const App = () => {
       }
 
       setmovie(data.results);
+      if(query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
+      }
+
     } catch (error) {
     }finally{
     setisLoading(false);
   }
+  }
+
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies();
+
+      settrendingMovies(movies);
+
+    } catch (error) {
+      console.error('Error fetching trending movies:', error);
+    }
   }
 
   useEffect(() => {
@@ -70,6 +88,21 @@ const App = () => {
     fetchMovies(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 
+  useEffect(() => {
+    const db = getFirestore();
+    const q = query(
+      collection(db, "trending_searches"),
+      where("count", ">", 3),
+      orderBy("count", "desc"),
+      limit(5)
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const movies = snapshot.docs.map(doc => doc.data());
+      settrendingMovies(movies);
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <main>
       <div className='pattern'/> 
@@ -81,8 +114,24 @@ const App = () => {
           <h1>Movie <span className='text-gradient'>Finder</span></h1>
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
         </header>
+
+        {trendingMovies.length > 0 && (
+          <section className='trending'>
+
+            <h2>Trending Movies</h2>
+            <ul>
+              {trendingMovies.map((movie,index) => (
+                <li key={movie.movie_id || movie.id || index}>
+                  <p>{index + 1}</p>
+                  <img src={movie.poster_url ? `https://image.tmdb.org/t/p/w500/${movie.poster_url}` : './placeholder.png'} alt={movie.title || movie.name} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <section className='all-movies'>
-          <h2>All Movies</h2>
+          <h2>Popular Movies</h2>
           {isLoading ? <Spinner /> : errorMessage ? (
             <p className='text-red-500'>{errorMessage}</p>) : (
               <ul>
